@@ -1,19 +1,20 @@
 from flask import Flask
-from flask_mysql_connector import MySQL
-#__init__.py
+import mysql.connector
+
 app = Flask(__name__)
 
-# Secret key for session management
 app.config['SECRET_KEY'] = '30a9c161f25a46f1d97998c10bd0b1f8'
 app.config['WTF_CSRF_ENABLED'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = False 
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
-# MySQL configuration
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''  # Update this with your MySQL password if needed
-app.config['MYSQL_DATABASE'] = 'flask_db'
+def get_db_connection():
+    return mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='',  
+        database='flask_db'
+    )
 
-# Initialize MySQL
-mysql = MySQL(app)
-
-from finalproject import routes  # Import routes after MySQL setup
+from finalproject import routes

@@ -2,11 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">    
     <title>Register - Henrian's Personal Website</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    
+    <!-- Bootstrap JS and Popper (should be at end of body) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
+    <script defer src="{{ url_for('static', filename='javascript/see_password.js') }}"></script>
 </head>
 <body>
 
@@ -18,38 +28,84 @@
             
             <form method="POST" action="{{ url_for('register') }}">
                 {{ form.hidden_tag() }}
-                <br><br>    
                 <h1>Register</h1>
+
+                <!-- Username Field -->
                 <div class="form-group">
-                    {{ form.username.label }}
-                    {{ form.username(class="form-control", placeholder="Username") }}
-                </div>
-                <div class="form-group">
-                    {{ form.email.label }} 
-                    {{ form.email(class="form-control", placeholder="Email") }}
-                </div>
-                <div class="form-group">
-                    {{ form.password.label }}
+                    {{ form.username.label(class="form-control-label") }}
                     <div class="input-group">
-                        {{ form.password(class="form-control", id="password", placeholder="Password") }}
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-outline-secondary" id="togglePassword">
-                                <i class="fa-solid fa-eye" id="passwordIcon"></i>
-                            </button>
-                        </div>
+                        {% if form.username.errors %}
+                            {{ form.username(class="form-control is-invalid", id="username", placeholder="Username") }}
+                        {% else %}
+                            {{ form.username(class="form-control", id="username", autocomplete="username", placeholder="Username") }}
+                        {% endif %}
                     </div>
+                    {% if form.username.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.username.errors %}
+                                <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
+
+                <!-- Email Field -->
                 <div class="form-group">
-                    {{ form.confirm_password.label }}
+                    {{ form.email.label(class="form-control-label") }}
                     <div class="input-group">
-                        {{ form.confirm_password(class="form-control", id="confirm-password", placeholder="Confirm Password") }}
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-outline-secondary" id="toggleConfirmPassword">
-                                <i class="fa-solid fa-eye" id="confirmPasswordIcon"></i>
-                            </button>
-                        </div>
+                        {% if form.email.errors %}
+                            {{ form.email(class="form-control is-invalid", id="email", autocomplete="email", placeholder="Email") }}
+                        {% else %}
+                            {{ form.email(class="form-control", id="email", autocomplete="email", placeholder="Email") }}
+                        {% endif %}
                     </div>
+                    {% if form.email.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.email.errors %}
+                                <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    {{ form.password.label(class="form-control-label") }}
+                    <div class="password-container">
+                        {% if form.password.errors %}
+                            {{ form.password(class="form-control is-invalid password-input", id="password", placeholder="Password") }}
+                        {% else %}
+                            {{ form.password(class="form-control password-input", id="password", placeholder="Password") }}
+                        {% endif %}
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="fa-solid fa-eye" id="passwordIcon"></i>
+                        </button>
+                    </div> 
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div class="form-group">
+                    {{ form.confirm_password.label(class="form-control-label") }}
+                    <div class="password-container">
+                        {% if form.confirm_password.errors %}
+                            {{ form.confirm_password(class="form-control password-input", id="confirm_password", placeholder="Confirm Password") }}
+                        {% else %}
+                            {{ form.confirm_password(class="form-control password-input", id="confirm_password", placeholder="Confirm Password") }}
+                        {% endif %}
+                        <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                            <i class="fa-solid fa-eye" id="confirmPasswordIcon"></i>
+                        </button>
+                    </div>
+                    {% if form.confirm_password.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.confirm_password.errors %}
+                                <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Submit Button -->
                 {{ form.submit(class="btn btn-primary") }}
             </form>
             
@@ -63,29 +119,6 @@
         </div>
     </div>
 
-    <!-- JavaScript for toggling visibility -->
-    <script>
-        // Password field toggle
-        const togglePassword = document.getElementById("togglePassword");
-        const passwordField = document.getElementById("password");
-        const passwordIcon = document.getElementById("passwordIcon");
-
-        togglePassword.addEventListener("click", () => {
-            const isPassword = passwordField.type === "password";
-            passwordField.type = isPassword ? "text" : "password";
-            passwordIcon.className = isPassword ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
-        });
-
-        // Confirm Password field toggle
-        const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
-        const confirmPasswordField = document.getElementById("confirm-password");
-        const confirmPasswordIcon = document.getElementById("confirmPasswordIcon");
-
-        toggleConfirmPassword.addEventListener("click", () => {
-            const isPassword = confirmPasswordField.type === "password";
-            confirmPasswordField.type = isPassword ? "text" : "password";
-            confirmPasswordIcon.className = isPassword ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
-        });
-    </script>
 </body>
 </html>
+ 
